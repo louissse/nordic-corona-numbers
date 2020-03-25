@@ -1,5 +1,31 @@
-$body-color: red;
+$primary-color: #21243d;
+$secondary-color1: #512b58;
+$secondary-color2: #0c7b93;
+$secondary-color3: #f0134d;
+
+$theme-colors: (
+  "primary":$primary-color,
+  "danger": #ff4136
+);
 
 body {
-  color: $body-color;
+  color: $primary-color !important;
+}
+.jumbotron {
+  background-color: $secondary-color3 !important;
+}
+.jumbotron-text{
+  text-align: center;
+}
+.note {
+  font-size: 0.7rem;
+}
+.denmarkinfo {
+  color: $secondary-color3;
+}
+.swedeninfo {
+  color: $secondary-color1;
+}
+.norwayinfo {
+  color: $secondary-color2;
 }
