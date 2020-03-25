@@ -2,11 +2,37 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="./bundle.css">
-    <title>Hello Webpack</title>
+    <title>Corona i tal</title>
   </head>
   <body>
     <div class="container-fluid">
-        <h1>Jeg tester et webprojekt! Det er ikke nemt!...</h1>    
+      <div class="jumbotron myJumbotron">
+        <h1 class="jumbotron-text">Nordic Corona numbers</h1> 
+      </div>
+      <div class="row">
+        <div class="col-sm-3">
+          <button id="logScaleButton" type="button" class="btn btn-outline-primary btn-sm mb-1">Change y-scale</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-8">
+          <div class="chart-container" style="position: relative;">
+
+            <div class="card">
+              <canvas id="coronaChart"></canvas>
+              <div class="card-body">
+                <p class="card-text note">Reference: All data collected from Johns Hopkins CSSE. Last updated with numbers untill 24/3 2020</p>           
+              </div>
+            </div>
+          </div> 
+        </div>
+        <div class="col-sm-4">
+          <p class="denmarkinfo" id="denmarkInfo"></p>
+          <p class="swedeninfo" id="swedenInfo"></p>
+          <p class="norwayinfo" id="norwayInfo"></p>
+        </div>
+      </div>
+
     </div>
     <script src="./bundle.js"></script>
   </body>
