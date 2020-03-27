@@ -25,6 +25,7 @@ let deathData = {
             label:denmark.name, // + " (first death "+ denmark.dayZero +" )",
             data: denmark.totalDeaths,
             fill: false,
+            dayZero: denmark.dayZero,
             borderColor: "#f0134d",
             backgroundColor: "#f0134d",
             borderWidth: 2,
@@ -40,6 +41,7 @@ let deathData = {
             label:sweden.name, // + " (first death "+ sweden.dayZero +" )",
             data: sweden.totalDeaths,
             fill: false,
+            dayZero: sweden.dayZero,
             borderColor: "#512b58",
             backgroundColor: "#512b58",
             borderWidth: 2,
@@ -54,6 +56,7 @@ let deathData = {
             label:norway.name, //+ " (first death "+ norway.dayZero +" )",
             data: norway.totalDeaths,
             fill: false,
+            dayZero: norway.dayZero,
             borderColor: "#0c7b93",
             backgroundColor: "#0c7b93",
             borderWidth: 2,
@@ -245,7 +248,9 @@ function coronaDeathChartOptions(){
                     return label;
                 },
                 title: function(tooltipItem, data){
-                    let title = "";
+                    let test = tooltipItem[0].datasetIndex;
+                    let date = new Date(calculateDate(data.datasets[tooltipItem[0].datasetIndex].dayZero, tooltipItem[0].xLabel));
+                     let title = date.toLocaleString('default', { month: 'long' }) + ' ' + date.getDate();
                     return title;
                 }
 
@@ -266,11 +271,6 @@ function coronaDeathChartOptions(){
     _.merge(options, otherOptions)
 
     return options;
-}
-
-function customHoverRadius(context){
-    var test = context
-
 }
 
 //generates labels for a single country
@@ -296,6 +296,13 @@ function generateModel(xlabels, b, k){
         yValues: yvalues,
         T2: T2.toFixed(1)
     };
+}
+
+function calculateDate(dayZero, numberDays){
+    let dateString = dayZero.split('-');
+    let dayZeroNew = new Date(dateString[2], dateString[1] -1, dateString[0]);
+    let returnDate = new Date();
+    return returnDate.setDate(dayZeroNew.getDate() + numberDays);
 }
 
 $( "#logScaleButton" ).click(function() {
