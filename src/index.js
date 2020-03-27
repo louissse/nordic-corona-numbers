@@ -187,7 +187,7 @@ function coronaDeathChartOptions(){
     // Options for legend
     let legend = {
          //align: 'start',   
-        position: 'bottom', 
+        position: 'top', 
         labels: {
             boxWidth: 30,
             padding: 20,
