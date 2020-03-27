@@ -11,7 +11,7 @@ import './scss/style.scss';
 
 let ctx = document.getElementById('coronaChart');
 let labels = generateLabels(dataObject.countries[1].totalDeaths);
-let liniar = true;
+let liniar = false;
 
 
 let denmark = dataObject.countries[0];
@@ -26,27 +26,28 @@ let deathData = {
             data: denmark.totalDeaths,
             fill: false,
             borderColor: "#f0134d",
-            borderWidth: 3,
-            pointHoverBorderWidth: 2,
-            //pointBackgroundColor: "#f0134d",
+            backgroundColor: "#f0134d",
+            borderWidth: 2,
+            pointHoverBorderWidth: 3,
+            pointBackgroundColor: 'rgba(0, 0, 0, 0.1)',
             pointBorderColor: "#f0134d",
-            pointRadius: 7,
-            pointRadius: 7,
-            pointHoverRadius: 6,
+            pointRadius: 6,
+            pointHoverRadius: 7,
             showLine: false,
+
         },
         {
             label:sweden.name, // + " (first death "+ sweden.dayZero +" )",
             data: sweden.totalDeaths,
             fill: false,
             borderColor: "#512b58",
-            borderWidth: 3,
-            pointHoverBorderWidth: 2,
-            //pointBackgroundColor: "#512b58",
+            backgroundColor: "#512b58",
+            borderWidth: 2,
+            pointHoverBorderWidth: 3,
+            pointBackgroundColor: 'rgba(0, 0, 0, 0.1)',
             pointBorderColor: "#512b58",
-            pointRadius: 7,
-            pointRadius: 7,
-            pointHoverRadius: 6,
+            pointRadius: 6,
+            pointHoverRadius: 7,
             showLine: false,
         },
         {
@@ -54,26 +55,32 @@ let deathData = {
             data: norway.totalDeaths,
             fill: false,
             borderColor: "#0c7b93",
-            borderWidth: 3,
-            pointHoverBorderWidth: 2,
-            //pointBackgroundColor: "#0c7b93",
+            backgroundColor: "#0c7b93",
+            borderWidth: 2,
+            pointHoverBorderWidth: 3,
+            pointBackgroundColor: 'rgba(0, 0, 0, 0.1)',
             pointBorderColor: "#0c7b93",
-            pointRadius: 7,
-            pointHoverRadius: 6,
+            pointRadius: 6,
+            pointHoverRadius: 7,
             showLine: false,
         }
     ]
 }
 
+let denmarkModelProps = generateModel(labels, denmark.model.b, denmark.model.k)
+let swedenModelProps = generateModel(labels, sweden.model.b, sweden.model.k)
+let norwayModelProps = generateModel(labels, norway.model.b, norway.model.k)
+
 let denmarkModel = {
-    label: "noLabel",
-    data: generateModel(labels, denmark.model.b, denmark.model.k),
+    label: "exp fit to the last 7 days. Total deaths in Denmark doubles every " + denmarkModelProps.T2 + " days",
+    data: denmarkModelProps.yValues,
     fill: false,
     borderColor: "#f0134d",
+    backgroundColor: "#ffffff",
     borderWidth: 3,
     pointHoverBorderWidth: 2,
-    //pointBackgroundColor: "#f0134d",
-    pointBorderColor: "#f0134d",
+    pointBackgroundColor: "#f0134d",
+    //pointBorderColor: "#f0134d",
     pointRadius: 0,
     pointHoverRadius: 0,
     showLine: true,
@@ -81,10 +88,11 @@ let denmarkModel = {
     //steppedLine: true
 }
 let swedenModel = {
-    label: "noLabel",
-    data: generateModel(labels, sweden.model.b, sweden.model.k),
+    label: "exp fit to the last 7 days. Total deaths in Sweden doubles every " + swedenModelProps.T2 + " days",
+    data: swedenModelProps.yValues,
     fill: false,
     borderColor: "#512b58",
+    backgroundColor: "#ffffff",
     borderWidth: 3,
     pointHoverBorderWidth: 2,
     //pointBackgroundColor: "#f0134d",
@@ -96,19 +104,19 @@ let swedenModel = {
     //steppedLine: true
 }
 let norwayModel = {
-    label: "noLabel",
-    data: generateModel(labels, norway.model.b, norway.model.k),
+    label: "exp fit to the last 7 days. Total deaths in Denmark doubles every " + norwayModelProps.T2 + " days",
+    data: norwayModelProps.yValues,
     fill: false,
     borderColor: "#0c7b93",
+    backgroundColor: "#ffffff",
     borderWidth: 3,
     pointHoverBorderWidth: 2,
-    //pointBackgroundColor: "#f0134d",
-    pointBorderColor: "#0c7b93",
+    pointBackgroundColor: "#ffffff",
+    //pointBorderColor: "#0c7b93",
     pointRadius: 0,
     pointHoverRadius: 0,
     showLine: true,
     borderDash: [3, 5]
-    //steppedLine: true
 }
 
 deathData.datasets.push(denmarkModel);
@@ -139,7 +147,7 @@ let coronaDeathChart = new Chart(ctx, {
 function coronaDeathChartOptions(){
     //General options
     let options = {
-        aspectRatio: 1.5,
+        aspectRatio: 1.3,
         responsive: true,
         title: {
             display: true,
@@ -148,6 +156,9 @@ function coronaDeathChartOptions(){
         }
     }
     //Options for scales
+    function test(){
+        return liniar? 200: 1000;
+    }
     let scales = {
         
             yAxes:[ {
@@ -157,14 +168,14 @@ function coronaDeathChartOptions(){
                     labelString: '#of people'
                   },
                 ticks: {
-                    max: liniar? 50: 100
+                    max: test()
                 }
                 
             }],
             xAxes: [{
                 scaleLabel: {
                     display: true,
-                    labelString: 'Time in days (day zero 11-03-2020)'
+                    labelString: 'Time (days) since first death'
                 },
             
             }]
@@ -173,6 +184,7 @@ function coronaDeathChartOptions(){
     // Options for legend
     let legend = {
          //align: 'start',   
+        position: 'bottom', 
         labels: {
             boxWidth: 30,
             padding: 20,
@@ -182,8 +194,34 @@ function coronaDeathChartOptions(){
                 if(label.text !== 'noLabel'){
                     returnValue = true;
                 } 
-                return returnValue;
-             }
+                return true;
+            },
+            generateLabels(chart) {
+                const datasets = chart.data.datasets;
+                const options = chart.options.legend || {};
+                const usePointStyle = options.labels && options.labels.usePointStyle;
+    
+                return chart._getSortedDatasetMetas().map((meta) => {
+                    const style = meta.controller.getStyle(usePointStyle ? 0 : undefined);
+    
+                    return {
+                        text: datasets[meta.index].label,
+                        fillStyle: datasets[meta.index].backgroundColor, //style.backgroundColor,
+                        hidden: meta.hidden,
+                        lineCap: style.borderCapStyle,
+                        lineDash: style.borderDash,
+                        lineDashOffset: style.borderDashOffset,
+                        lineJoin: style.borderJoinStyle,
+                        lineWidth: style.borderWidth,
+                        strokeStyle: style.borderColor,
+                        pointStyle: style.pointStyle,
+                        rotation: style.rotation,
+    
+                        // Below is extra data used for toggling the datasets
+                        datasetIndex: meta.index
+                    };
+                }, this);
+            }
         }
     }
     // Options for layout
@@ -197,36 +235,47 @@ function coronaDeathChartOptions(){
         }
     // Options for tooltips
     let  tooltips = {
-            mode: "nearest",
+            mode: 'nearest',
             intersect: true,
             displayColors: false,
             callbacks: {
                 label: function(tooltipItem, data) {
                     let country = data.datasets[tooltipItem.datasetIndex].label.split(' ')
-                    let label = "Deaths: " + tooltipItem.yLabel;
-                    label = country[0] + ": " + tooltipItem.yLabel;
+                    let label =country[0] + ": " + tooltipItem.yLabel + " deaths";
                     return label;
                 },
                 title: function(tooltipItem, data){
                     let title = "";
                     return title;
                 }
+
             }
     }
+
+     let hover = {
+         mode: 'nearest'
+     }
+
     let otherOptions = {
          scales,
          legend,
          layout,
-         tooltips
+         tooltips,
+         hover
     }
     _.merge(options, otherOptions)
 
     return options;
 }
 
+function customHoverRadius(context){
+    var test = context
+
+}
+
 //generates labels for a single country
 function generateLabels(data){
-    let labels = Array.from(Array(data.length + 2).keys());
+    let labels = Array.from(Array(data.length + 10).keys());
     // let labelnumber = 0;
     // _.forEach(data, function(value){
     //     labels.push(labelnumber);
@@ -237,27 +286,25 @@ function generateLabels(data){
 
 function generateModel(xlabels, b, k){
     let yvalues = [];
+    let T2;
     _.forEach(xlabels, function(value){
         let y = b*Math.exp(k*value);
         yvalues.push(y);
     });
-    return yvalues;
+    T2 = Math.log(2)/k;
+    return {
+        yValues: yvalues,
+        T2: T2.toFixed(1)
+    };
 }
 
 $( "#logScaleButton" ).click(function() {
     liniar = !liniar;
     coronaDeathChart.options.scales.yAxes[0].type = liniar? 'linear' : 'logarithmic';
+    coronaDeathChart.options.scales.yAxes[0].ticks.max = liniar? 200 : 1000 ;
+    coronaDeathChart.options.scales.yAxes[0].ticks.maxTicksLimit = liniar? 20 : 13 ;
     coronaDeathChart.update(); 
 });
 
-$(document).ready(function(){
-    // Change text of button element
-    let denmarkT2 = Math.log(2)/denmark.model.k;
-    let swedenT2 = Math.log(2)/sweden.model.k;
-    let norwayT2 = Math.log(2)/norway.model.k;
-    $("#denmarkInfo").html("Total deaths in Denmark doubles every " + denmarkT2.toFixed(1) + " days.");
-    $("#swedenInfo").html("Total deaths in Sweden doubles every " + swedenT2.toFixed(1) + " days.");
-    $("#norwayInfo").html("Total deaths in Norway doubles every " + norwayT2.toFixed(1) + " days.");
-});
 
 
