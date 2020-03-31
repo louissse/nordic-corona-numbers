@@ -8,6 +8,7 @@ let dataObject = require('./data.json');
 
 import 'bootstrap';
 import './scss/style.scss';
+import './deathChart'
 
 let ctx = document.getElementById('coronaChart');
 let labels = generateLabels(dataObject.countries[1].totalDeaths);
