@@ -108,7 +108,7 @@ let swedenModel = {
     //steppedLine: true
 }
 let norwayModel = {
-    label: "exp fit to the last 7 days. Total deaths in Denmark doubles every " + norwayModelProps.T2 + " days",
+    label: "exp fit to the last 7 days. Total deaths in Norway doubles every " + norwayModelProps.T2 + " days",
     data: norwayModelProps.yValues,
     fill: false,
     borderColor: "#0c7b93",
@@ -302,8 +302,9 @@ function generateModel(xlabels, b, k){
 function calculateDate(dayZero, numberDays){
     let dateString = dayZero.split('-');
     let dayZeroNew = new Date(dateString[2], dateString[1] -1, dateString[0]);
-    let returnDate = new Date();
-    return returnDate.setDate(dayZeroNew.getDate() + numberDays);
+    
+    return dayZeroNew.setDate(dayZeroNew.getDate() + numberDays);
+
 }
 
 $( "#logScaleButton" ).click(function() {
