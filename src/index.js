@@ -161,7 +161,7 @@ function coronaDeathChartOptions(){
     }
     //Options for scales
     function test(){
-        return liniar? 200: 1000;
+        return liniar? 300: 1000;
     }
     let scales = {
         
@@ -310,7 +310,7 @@ function calculateDate(dayZero, numberDays){
 $( "#logScaleButton" ).click(function() {
     liniar = !liniar;
     coronaDeathChart.options.scales.yAxes[0].type = liniar? 'linear' : 'logarithmic';
-    coronaDeathChart.options.scales.yAxes[0].ticks.max = liniar? 200 : 1000 ;
+    coronaDeathChart.options.scales.yAxes[0].ticks.max = liniar? 300 : 1000 ;
     coronaDeathChart.options.scales.yAxes[0].ticks.maxTicksLimit = liniar? 20 : 13 ;
     coronaDeathChart.update(); 
 });
